@@ -1,26 +1,36 @@
+import { Server } from 'http';
+import mongoose from 'mongoose';
 import app from './app';
-import config from './config/index';
-import { supabase } from './config/supabase';
+import config from './config';
+
+
+let server: Server;
 
 async function main() {
   try {
-    
-    const { data, error } = await supabase.from('your_table_name').select('*').limit(1);
-    
-    if (error) {
-      console.error('Supabase connection error:', error);
-      throw new Error('Failed to connect to Supabase');
-    }
-
-    console.log("✅ Supabase Connection Successful");
-
+    await mongoose.connect(config.database_url as string);
+    console.log('Database connected successfully');
     app.listen(config.port, () => {
-      console.log(`🚀 Server is running on port ${config.port}`);
+      console.log(`app is listening on port ${config.port}`);
     });
   } catch (err) {
-    console.error('❌ Error starting server:', err);
-    process.exit(1);
+    console.log(err);
   }
 }
 
 main();
+
+process.on('unhandledRejection', () => {
+  console.log(`😈 unahandledRejection is detected , shutting down ...`);
+  if (server) {
+    server.close(() => {
+      process.exit(1);
+    });
+  }
+  process.exit(1);
+});
+
+process.on('uncaughtException', () => {
+  console.log(`😈 uncaughtException is detected , shutting down ...`);
+  process.exit(1);
+});

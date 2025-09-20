@@ -5,7 +5,7 @@ dotenv.config({ path: path.join((process.cwd(), '.env')) });
 
 export default {
   port: process.env.PORT,
-  supabase_url: process.env.SUPABASE_URL,
+  database_url: process.env.DATABASE_URL,
   supabase_key: process.env.SUPABASE_SECRET_KEY,
   supabase_service_role_key: process.env.SUPABASE_SERVICE_ROLE_KEY,
   
